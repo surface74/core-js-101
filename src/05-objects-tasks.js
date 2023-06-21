@@ -114,36 +114,111 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
+// const cssSelectorBuilder = {
+//   element(/* value */) {
+//     throw new Error('Not implemented');
+//   },
+
+//   id(/* value */) {
+//     throw new Error('Not implemented');
+//   },
+
+//   class(/* value */) {
+//     throw new Error('Not implemented');
+//   },
+
+//   attr(/* value */) {
+//     throw new Error('Not implemented');
+//   },
+
+//   pseudoClass(/* value */) {
+//     throw new Error('Not implemented');
+//   },
+
+//   pseudoElement(/* value */) {
+//     throw new Error('Not implemented');
+//   },
+
+//   combine(/* selector1, combinator, selector2 */) {
+//     throw new Error('Not implemented');
+//   },
+// };
+function CssElement(value) {
+  this.value = value;
+  this.stringify = () => this.value;
+}
+
+function CssId(value) {
+  this.value = value;
+  this.stringify = () => `#${this.value}`;
+}
+
+function CssClass(value) {
+  this.value = value;
+  this.stringify = () => `.${this.value}`;
+}
+
+function CssAttr(value) {
+  this.value = value;
+  this.stringify = () => `[${this.value}]`;
+}
+
+function CssPseudoClass(value) {
+  this.value = value;
+  this.stringify = () => `:${this.value}`;
+}
+
+function CssPseudoElement(value) {
+  this.value = value;
+  this.stringify = () => `::${this.value}`;
+}
+
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  cssSelector: '',
+
+  element(value) {
+    this.cssSelector = ((new CssElement(value)).stringify());
+    return { ...this };
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    this.cssSelector += ((new CssId(value)).stringify());
+    return { ...this };
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    this.cssSelector += ((new CssClass(value)).stringify());
+    return { ...this };
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    this.cssSelector += ((new CssAttr(value)).stringify());
+    return { ...this };
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    this.cssSelector += ((new CssPseudoClass(value)).stringify());
+    return { ...this };
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    this.cssSelector += ((new CssPseudoElement(value)).stringify());
+    return { ...this };
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    const selector = `${selector1.stringify()} ${combinator} ${selector2.stringify()}`;
+
+    this.cssSelector = selector;
+    return { ...this };
+  },
+
+  stringify() {
+    const selector = this.cssSelector;
+    this.cssSelector = '';
+    return selector;
   },
 };
-
 
 module.exports = {
   Rectangle,
